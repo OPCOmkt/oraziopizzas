@@ -1,0 +1,1195 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Orazio — Pizza estilo Nueva York, pasta y cócteles | Hermosillo</title>
+    <meta name="description" content="Menú interactivo y reservaciones de Orazio en Hermosillo. Pizza estilo Nueva York, estilo Detroit, pastas frescas y cócteles en Hotel Plaza Londres.">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Inter & Instrument Serif para toques editoriales minimalistas -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Configuración de Tailwind con los colores de identidad de Orazio -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        orazio: {
+                            cream: '#F5F0E6',
+                            paper: '#FAF7F0',
+                            sand: '#EAE2D3',
+                            red: '#B81D24',
+                            darkred: '#8F1319',
+                            ink: '#1A1918',
+                            muted: '#5C5852'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                        serif: ['Instrument Serif', 'Georgia', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Optimizaciones de rendimiento y experiencia táctil móvil */
+        body {
+            background-color: #F5F0E6;
+            color: #1A1918;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Ocultar barra de scroll en navegación horizontal manteniendo funcionalidad */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Rombos del logotipo ORAZIO */
+        .diamond-letter {
+            transform: rotate(45deg);
+        }
+        .diamond-letter > span {
+            transform: rotate(-45deg);
+            display: block;
+        }
+
+        /* Animaciones suaves */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-orazio-red selection:text-orazio-cream pb-28 sm:pb-16">
+
+    <!-- ===================================================================== -->
+    <!-- HEADER MINIMALISTA Y BARRA DE ESTADO EN VIVO                         -->
+    <!-- ===================================================================== -->
+    <header class="sticky top-0 z-40 bg-orazio-cream/95 backdrop-blur-md border-b border-orazio-ink/10 transition-all">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+            <!-- Identidad Visual Orazio (Rombos) -->
+            <a href="#" class="flex items-center gap-1.5 group focus:outline-none" aria-label="Inicio Orazio">
+                <div class="flex items-center space-x-1.5 py-1 pl-1">
+                    <div class="w-5 h-5 bg-orazio-red text-orazio-cream diamond-letter flex items-center justify-center text-[10px] font-bold shadow-xs transition-transform group-hover:scale-105"><span>O</span></div>
+                    <div class="w-5 h-5 bg-orazio-red text-orazio-cream diamond-letter flex items-center justify-center text-[10px] font-bold shadow-xs transition-transform group-hover:scale-105"><span>R</span></div>
+                    <div class="w-5 h-5 bg-orazio-red text-orazio-cream diamond-letter flex items-center justify-center text-[10px] font-bold shadow-xs transition-transform group-hover:scale-105"><span>A</span></div>
+                    <div class="w-5 h-5 bg-orazio-red text-orazio-cream diamond-letter flex items-center justify-center text-[10px] font-bold shadow-xs transition-transform group-hover:scale-105"><span>Z</span></div>
+                    <div class="w-5 h-5 bg-orazio-red text-orazio-cream diamond-letter flex items-center justify-center text-[10px] font-bold shadow-xs transition-transform group-hover:scale-105"><span>I</span></div>
+                    <div class="w-5 h-5 bg-orazio-red text-orazio-cream diamond-letter flex items-center justify-center text-[10px] font-bold shadow-xs transition-transform group-hover:scale-105"><span>O</span></div>
+                </div>
+            </a>
+
+            <!-- Acciones Rápidas (Reservar / Info) -->
+            <div class="flex items-center gap-2 sm:gap-3">
+                <button onclick="openInfoModal()" class="p-2.5 text-orazio-ink/80 hover:text-orazio-red rounded-full hover:bg-orazio-sand/60 transition-colors text-xs font-medium flex items-center gap-1.5" aria-label="Horarios y ubicación">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <span class="hidden sm:inline">Horarios</span>
+                </button>
+                <button onclick="openReserveModal()" class="bg-orazio-red hover:bg-orazio-darkred active:scale-95 text-orazio-cream text-xs sm:text-sm font-medium px-4 py-2.5 rounded-full shadow-sm transition-all cursor-pointer">
+                    Reservar mesa
+                </button>
+            </div>
+        </div>
+
+        <!-- Navegación Horizontal de Categorías (Thumb-friendly) -->
+        <nav aria-label="Categorías del menú" class="border-t border-orazio-ink/5 bg-orazio-paper/80">
+            <div id="category-tabs" class="max-w-3xl mx-auto px-4 sm:px-6 flex items-center gap-2 overflow-x-auto no-scrollbar py-2.5">
+                <!-- Generado dinámicamente por JS -->
+            </div>
+        </nav>
+    </header>
+
+    <!-- ===================================================================== -->
+    <!-- HERO EDITORIAL COMPACTO                                               -->
+    <!-- ===================================================================== -->
+    <main class="max-w-3xl mx-auto px-4 sm:px-6 pt-6 sm:pt-10">
+        <section class="mb-8 pb-6 border-b border-orazio-ink/10">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                <span id="live-status-badge" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-orazio-sand text-orazio-ink">
+                    <span class="w-2 h-2 rounded-full bg-emerald-600 animate-pulse"></span>
+                    Verificando horario...
+                </span>
+                <a href="https://www.google.com/maps/place/Orazio/@29.0759117,-110.961342,17z" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-xs font-medium text-orazio-muted hover:text-orazio-red transition-colors">
+                    <svg class="w-3.5 h-3.5 text-orazio-red" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 010-5 2.5 2.5 0 010 5z"/></svg>
+                    Hidalgo 63, Col. Centenario (Hotel Plaza Londres)
+                </a>
+            </div>
+
+            <h1 class="font-serif text-4xl sm:text-5xl tracking-tight text-orazio-ink leading-none mb-2">
+                Pizza estilo Nueva York, pasta y cócteles.
+            </h1>
+            <p class="text-sm sm:text-base text-orazio-muted max-w-xl leading-relaxed">
+                Masa madurada, ingredientes seleccionados y clásicos italoamericanos en el corazón de Hermosillo.
+            </p>
+
+            <!-- Barra de búsqueda y filtros dietéticos rápidos -->
+            <div class="mt-5 flex flex-col sm:flex-row gap-2.5">
+                <div class="relative flex-1">
+                    <svg class="w-4 h-4 text-orazio-muted absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/>
+                    </svg>
+                    <input 
+                        type="search" 
+                        id="search-input" 
+                        placeholder="Buscar pizza, pasta, ingrediente (ej. vodka, miel, burrata)..." 
+                        class="w-full bg-orazio-paper border border-orazio-ink/15 focus:border-orazio-red focus:ring-1 focus:ring-orazio-red rounded-xl pl-10 pr-4 py-2.5 text-sm text-orazio-ink placeholder:text-orazio-muted/70 outline-none transition-all"
+                    >
+                </div>
+                <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+                    <button data-filter="all" class="filter-chip active px-3.5 py-2 rounded-xl text-xs font-medium bg-orazio-ink text-orazio-cream transition-all whitespace-nowrap cursor-pointer">
+                        Todos
+                    </button>
+                    <button data-filter="vegetariano" class="filter-chip px-3.5 py-2 rounded-xl text-xs font-medium bg-orazio-paper border border-orazio-ink/15 text-orazio-ink hover:border-orazio-ink/40 transition-all whitespace-nowrap cursor-pointer">
+                        Vegetariano
+                    </button>
+                    <button data-filter="picante" class="filter-chip px-3.5 py-2 rounded-xl text-xs font-medium bg-orazio-paper border border-orazio-ink/15 text-orazio-ink hover:border-orazio-ink/40 transition-all whitespace-nowrap cursor-pointer">
+                        Toque Picante
+                    </button>
+                    <button data-filter="favorito" class="filter-chip px-3.5 py-2 rounded-xl text-xs font-medium bg-orazio-paper border border-orazio-ink/15 text-orazio-ink hover:border-orazio-ink/40 transition-all whitespace-nowrap cursor-pointer">
+                        De la casa
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===================================================================== -->
+        <!-- CONTENEDOR DINÁMICO DEL MENÚ                                          -->
+        <!-- ===================================================================== -->
+        <div id="menu-container" class="space-y-10">
+            <!-- Los platillos se renderizan aquí mediante JS -->
+        </div>
+
+        <!-- Estado vacío cuando la búsqueda no arroja resultados -->
+        <div id="empty-state" class="hidden py-16 text-center">
+            <p class="font-serif text-2xl text-orazio-ink mb-1">No encontramos ese platillo</p>
+            <p class="text-sm text-orazio-muted mb-4">Intenta buscar otro ingrediente o limpia los filtros activos.</p>
+            <button onclick="resetFilters()" class="px-4 py-2 rounded-full bg-orazio-ink text-orazio-cream text-xs font-medium hover:bg-orazio-red transition-colors">
+                Ver menú completo
+            </button>
+        </div>
+
+        <!-- ===================================================================== -->
+        <!-- PIE DE PÁGINA CON DATOS DE CONTACTO Y UBICACIÓN                       -->
+        <!-- ===================================================================== -->
+        <footer class="mt-16 pt-8 border-t border-orazio-ink/10 text-sm text-orazio-muted">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
+                <div>
+                    <h2 class="font-semibold text-orazio-ink mb-2">Ubicación</h2>
+                    <p class="leading-relaxed">Hidalgo 63, Col. Centenario<br>Dentro de Hotel Plaza Londres<br>83260 Hermosillo, Sonora</p>
+                    <a href="https://www.google.com/maps/place/Orazio/@29.0759117,-110.961342,17z" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 text-orazio-red font-medium mt-2 hover:underline">
+                        Abrir en Google Maps
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25"/></svg>
+                    </a>
+                </div>
+                <div>
+                    <h2 class="font-semibold text-orazio-ink mb-2">Horarios de servicio</h2>
+                    <ul class="space-y-1">
+                        <li class="flex justify-between"><span>Lunes y Martes</span><span class="text-orazio-muted/70">Cerrado</span></li>
+                        <li class="flex justify-between"><span>Miércoles y Jueves</span><span class="font-medium text-orazio-ink">1:00 PM – 11:00 PM</span></li>
+                        <li class="flex justify-between"><span>Viernes y Sábado</span><span class="font-medium text-orazio-ink">1:00 PM – 1:00 AM</span></li>
+                        <li class="flex justify-between"><span>Domingo</span><span class="font-medium text-orazio-ink">1:00 PM – 10:00 PM</span></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 border-t border-orazio-ink/10 text-xs">
+                <p>© Orazio Hermosillo. Rica Pizza estilo Nueva York.</p>
+                <div class="flex items-center gap-4">
+                    <a href="https://www.instagram.com/oraziopizzas" target="_blank" rel="noopener noreferrer" class="hover:text-orazio-red transition-colors font-medium">@oraziopizzas</a>
+                    <button onclick="openReserveModal()" class="text-orazio-red font-medium hover:underline cursor-pointer">Reservar mesa</button>
+                </div>
+            </div>
+        </footer>
+    </main>
+
+    <!-- ===================================================================== -->
+    <!-- BARRA FLOTANTE DE SELECCIÓN / MI LISTA PARA COMPARTIR EN MESA         -->
+    <!-- ===================================================================== -->
+    <div id="selection-bar" class="fixed bottom-4 left-4 right-4 z-30 max-w-3xl mx-auto hidden animate-fade-in">
+        <div class="bg-orazio-ink text-orazio-cream rounded-2xl p-3.5 shadow-xl flex items-center justify-between gap-3 border border-white/10">
+            <button onclick="openSelectionModal()" class="flex items-center gap-3 text-left flex-1 cursor-pointer">
+                <span id="selection-count" class="w-7 h-7 rounded-full bg-orazio-red text-orazio-cream text-xs font-bold flex items-center justify-center shrink-0">0</span>
+                <div>
+                    <p class="text-xs sm:text-sm font-medium leading-tight">Tu selección para la mesa</p>
+                    <p id="selection-preview" class="text-[11px] text-orazio-cream/70 truncate max-w-[180px] sm:max-w-xs">Toca para revisar o compartir</p>
+                </div>
+            </button>
+            <div class="flex items-center gap-2">
+                <button onclick="openSelectionModal()" class="px-3.5 py-2 rounded-xl bg-orazio-cream text-orazio-ink text-xs font-semibold hover:bg-orazio-sand transition-colors cursor-pointer">
+                    Ver lista
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- MODAL 1: SISTEMA DE RESERVACIONES INTELIGENTE                         -->
+    <!-- ===================================================================== -->
+    <div id="reserve-modal" class="fixed inset-0 z-50 hidden items-end sm:items-center justify-center bg-orazio-ink/60 backdrop-blur-xs p-0 sm:p-4" role="dialog" aria-modal="true" aria-labelledby="reserve-title">
+        <div class="bg-orazio-paper w-full max-w-lg rounded-t-3xl sm:rounded-3xl shadow-2xl border border-orazio-ink/10 overflow-hidden max-h-[92vh] flex flex-col animate-fade-in">
+            <!-- Cabecera del Modal -->
+            <div class="px-6 py-4 bg-orazio-cream border-b border-orazio-ink/10 flex items-center justify-between shrink-0">
+                <div>
+                    <span class="text-[11px] uppercase tracking-wider font-semibold text-orazio-red">Hidalgo 63 · Col. Centenario</span>
+                    <h2 id="reserve-title" class="font-serif text-2xl text-orazio-ink leading-tight">Reservar mesa en Orazio</h2>
+                </div>
+                <button onclick="closeReserveModal()" class="p-2 rounded-full hover:bg-orazio-sand text-orazio-ink transition-colors cursor-pointer" aria-label="Cerrar ventana">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+
+            <!-- Cuerpo del Formulario -->
+            <div class="p-6 overflow-y-auto space-y-5">
+                <form id="reservation-form" onsubmit="handleReservationSubmit(event)" class="space-y-5">
+                    
+                    <!-- Número de personas (Botones táctiles rápidos) -->
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-orazio-muted mb-2">1. Número de personas</label>
+                        <div class="grid grid-cols-5 gap-2" id="guests-selector">
+                            <button type="button" data-guests="2" class="guest-btn py-2.5 rounded-xl text-sm font-semibold border border-orazio-red bg-orazio-red text-orazio-cream transition-all cursor-pointer">2</button>
+                            <button type="button" data-guests="3" class="guest-btn py-2.5 rounded-xl text-sm font-semibold border border-orazio-ink/15 bg-orazio-cream text-orazio-ink hover:border-orazio-ink/40 transition-all cursor-pointer">3</button>
+                            <button type="button" data-guests="4" class="guest-btn py-2.5 rounded-xl text-sm font-semibold border border-orazio-ink/15 bg-orazio-cream text-orazio-ink hover:border-orazio-ink/40 transition-all cursor-pointer">4</button>
+                            <button type="button" data-guests="6" class="guest-btn py-2.5 rounded-xl text-sm font-semibold border border-orazio-ink/15 bg-orazio-cream text-orazio-ink hover:border-orazio-ink/40 transition-all cursor-pointer">6</button>
+                            <button type="button" data-guests="8+" class="guest-btn py-2.5 rounded-xl text-sm font-semibold border border-orazio-ink/15 bg-orazio-cream text-orazio-ink hover:border-orazio-ink/40 transition-all cursor-pointer">8+</button>
+                        </div>
+                        <input type="hidden" id="res-guests" value="2">
+                    </div>
+
+                    <!-- Fecha y Zona -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label for="res-date" class="block text-xs font-semibold uppercase tracking-wider text-orazio-muted mb-1.5">2. Fecha</label>
+                            <input type="date" id="res-date" required onchange="updateAvailableHours()" class="w-full bg-orazio-cream border border-orazio-ink/15 focus:border-orazio-red rounded-xl px-3.5 py-2.5 text-sm text-orazio-ink outline-none">
+                        </div>
+                        <div>
+                            <label for="res-zone" class="block text-xs font-semibold uppercase tracking-wider text-orazio-muted mb-1.5">Zona preferida</label>
+                            <select id="res-zone" class="w-full bg-orazio-cream border border-orazio-ink/15 focus:border-orazio-red rounded-xl px-3.5 py-2.5 text-sm text-orazio-ink outline-none">
+                                <option value="Salón principal">Salón principal</option>
+                                <option value="Barra">Barra</option>
+                                <option value="Terraza / Patio">Terraza / Patio</option>
+                                <option value="Indistinto">Cualquier área disponible</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Horarios dinámicos según el día de la semana -->
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-orazio-muted">3. Horario disponible</label>
+                            <span id="schedule-hint" class="text-[11px] text-orazio-muted"></span>
+                        </div>
+                        <div id="time-slots-container" class="grid grid-cols-4 gap-2 max-h-36 overflow-y-auto pr-1">
+                            <!-- Generado por JS según día elegido -->
+                        </div>
+                        <input type="hidden" id="res-time" required>
+                    </div>
+
+                    <!-- Datos del titular -->
+                    <div class="space-y-3 pt-2 border-t border-orazio-ink/10">
+                        <div>
+                            <label for="res-name" class="block text-xs font-semibold uppercase tracking-wider text-orazio-muted mb-1">4. Tu nombre</label>
+                            <input type="text" id="res-name" required placeholder="Ej. Sofía Valenzuela" class="w-full bg-orazio-cream border border-orazio-ink/15 focus:border-orazio-red rounded-xl px-3.5 py-2.5 text-sm text-orazio-ink outline-none">
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label for="res-phone" class="block text-xs font-semibold uppercase tracking-wider text-orazio-muted mb-1">Teléfono (WhatsApp)</label>
+                                <input type="tel" id="res-phone" required placeholder="662 123 4567" class="w-full bg-orazio-cream border border-orazio-ink/15 focus:border-orazio-red rounded-xl px-3.5 py-2.5 text-sm text-orazio-ink outline-none">
+                            </div>
+                            <div>
+                                <label for="res-notes" class="block text-xs font-semibold uppercase tracking-wider text-orazio-muted mb-1">Nota opcional</label>
+                                <input type="text" id="res-notes" placeholder="Cumpleaños, alergias..." class="w-full bg-orazio-cream border border-orazio-ink/15 focus:border-orazio-red rounded-xl px-3.5 py-2.5 text-sm text-orazio-ink outline-none">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Opción de incluir platillos preseleccionados -->
+                    <div id="include-selection-wrapper" class="hidden bg-orazio-sand/60 p-3 rounded-xl flex items-center gap-2.5">
+                        <input type="checkbox" id="res-include-menu" checked class="w-4 h-4 accent-orazio-red rounded">
+                        <label for="res-include-menu" class="text-xs text-orazio-ink cursor-pointer">
+                            Incluir mis <strong id="modal-sel-count">0</strong> platillos seleccionados como sugerencia de orden.
+                        </label>
+                    </div>
+
+                    <!-- Botón de envío -->
+                    <button type="submit" id="submit-res-btn" class="w-full bg-orazio-red hover:bg-orazio-darkred active:scale-[0.99] text-orazio-cream font-semibold py-3.5 rounded-2xl shadow-md transition-all text-sm cursor-pointer">
+                        Confirmar solicitud de reserva
+                    </button>
+                </form>
+
+                <!-- Vista de Confirmación de Reserva -->
+                <div id="reservation-confirmation" class="hidden text-center py-4 space-y-4 animate-fade-in">
+                    <div class="w-12 h-12 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+                    </div>
+                    <div>
+                        <span class="text-xs font-semibold uppercase tracking-wider text-orazio-red">Pase de reservación generado</span>
+                        <h3 class="font-serif text-3xl text-orazio-ink mt-0.5">¡Nos vemos en Orazio!</h3>
+                    </div>
+                    
+                    <div id="ticket-summary" class="bg-orazio-cream border border-orazio-ink/15 rounded-2xl p-4 text-left text-sm space-y-2">
+                        <!-- Resumen dinámico -->
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row gap-2.5 pt-2">
+                        <button type="button" onclick="copyReservationTicket()" class="flex-1 py-3 px-4 rounded-xl bg-orazio-ink text-orazio-cream text-xs font-semibold hover:bg-orazio-ink/90 transition-colors cursor-pointer">
+                            Copiar pase de reserva
+                        </button>
+                        <a href="https://www.instagram.com/oraziopizzas" target="_blank" rel="noopener noreferrer" class="flex-1 py-3 px-4 rounded-xl bg-orazio-red text-orazio-cream text-xs font-semibold hover:bg-orazio-darkred transition-colors text-center">
+                            Enviar por DM a @oraziopizzas
+                        </a>
+                    </div>
+                    <button type="button" onclick="resetReservationForm()" class="text-xs text-orazio-muted hover:text-orazio-ink underline pt-2 cursor-pointer">
+                        Hacer otra reservación
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- MODAL 2: LISTA DE ANTOJOS / COMANDA PARA COMPARTIR EN MESA            -->
+    <!-- ===================================================================== -->
+    <div id="selection-modal" class="fixed inset-0 z-50 hidden items-end sm:items-center justify-center bg-orazio-ink/60 backdrop-blur-xs p-0 sm:p-4" role="dialog" aria-modal="true">
+        <div class="bg-orazio-paper w-full max-w-md rounded-t-3xl sm:rounded-3xl shadow-2xl border border-orazio-ink/10 overflow-hidden max-h-[85vh] flex flex-col animate-fade-in">
+            <div class="px-6 py-4 bg-orazio-cream border-b border-orazio-ink/10 flex items-center justify-between">
+                <div>
+                    <h2 class="font-serif text-2xl text-orazio-ink">Tu selección en mesa</h2>
+                    <p class="text-xs text-orazio-muted">Ideal para decidir al centro o mostrar al mesero</p>
+                </div>
+                <button onclick="closeSelectionModal()" class="p-2 rounded-full hover:bg-orazio-sand text-orazio-ink cursor-pointer">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+            
+            <div id="selection-list-container" class="p-6 overflow-y-auto space-y-3 flex-1">
+                <!-- Items seleccionados -->
+            </div>
+
+            <div class="p-4 bg-orazio-cream border-t border-orazio-ink/10 space-y-2">
+                <button onclick="copySelectionList()" class="w-full py-3 rounded-xl bg-orazio-ink text-orazio-cream text-xs font-semibold hover:bg-orazio-ink/90 transition-colors cursor-pointer">
+                    Copiar lista para enviar por WhatsApp
+                </button>
+                <div class="flex gap-2">
+                    <button onclick="clearSelection()" class="flex-1 py-2.5 rounded-xl border border-orazio-ink/20 text-orazio-muted text-xs font-medium hover:text-orazio-ink cursor-pointer">
+                        Limpiar lista
+                    </button>
+                    <button onclick="closeSelectionModal(); openReserveModal();" class="flex-1 py-2.5 rounded-xl bg-orazio-red text-orazio-cream text-xs font-semibold hover:bg-orazio-darkred cursor-pointer">
+                        Reservar con esta orden
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- MODAL 3: INFORMACIÓN DEL LUGAR (HORARIOS Y MAPA)                      -->
+    <!-- ===================================================================== -->
+    <div id="info-modal" class="fixed inset-0 z-50 hidden items-end sm:items-center justify-center bg-orazio-ink/60 backdrop-blur-xs p-0 sm:p-4" role="dialog" aria-modal="true">
+        <div class="bg-orazio-paper w-full max-w-md rounded-t-3xl sm:rounded-3xl shadow-2xl border border-orazio-ink/10 overflow-hidden animate-fade-in">
+            <div class="px-6 py-4 bg-orazio-cream border-b border-orazio-ink/10 flex items-center justify-between">
+                <h2 class="font-serif text-2xl text-orazio-ink">Horarios y Ubicación</h2>
+                <button onclick="closeInfoModal()" class="p-2 rounded-full hover:bg-orazio-sand text-orazio-ink cursor-pointer">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <div class="p-6 space-y-5 text-sm">
+                <div>
+                    <h3 class="text-xs font-semibold uppercase tracking-wider text-orazio-red mb-2">Horarios Orazio</h3>
+                    <div class="bg-orazio-cream rounded-2xl p-4 space-y-2 border border-orazio-ink/10">
+                        <div class="flex justify-between"><span class="text-orazio-muted">Lunes – Martes</span><span class="font-medium text-orazio-muted">Cerrado</span></div>
+                        <div class="flex justify-between"><span class="text-orazio-muted">Miércoles – Jueves</span><span class="font-semibold text-orazio-ink">1:00 PM – 11:00 PM</span></div>
+                        <div class="flex justify-between"><span class="text-orazio-muted">Viernes – Sábado</span><span class="font-semibold text-orazio-ink">1:00 PM – 1:00 AM</span></div>
+                        <div class="flex justify-between"><span class="text-orazio-muted">Domingo</span><span class="font-semibold text-orazio-ink">1:00 PM – 10:00 PM</span></div>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-xs font-semibold uppercase tracking-wider text-orazio-red mb-2">Dirección</h3>
+                    <p class="text-orazio-ink font-medium">Hidalgo 63, Col. Centenario</p>
+                    <p class="text-orazio-muted text-xs mt-0.5">Dentro de Hotel Plaza Londres, Hermosillo, Sonora.</p>
+                    <a href="https://www.google.com/maps/place/Orazio/@29.0759117,-110.961342,17z" target="_blank" rel="noopener noreferrer" class="mt-3 w-full inline-flex items-center justify-center gap-2 py-3 rounded-xl bg-orazio-ink text-orazio-cream text-xs font-semibold hover:bg-orazio-red transition-colors">
+                        Cómo llegar en Google Maps
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast de Notificación Sutil -->
+    <div id="toast" class="fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-orazio-ink text-orazio-cream text-xs font-medium px-4 py-2.5 rounded-full shadow-lg opacity-0 pointer-events-none transition-opacity duration-200">
+        Copiado al portapapeles
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- LÓGICA DE DATOS, INTERACCIÓN Y RESERVACIONES                          -->
+    <!-- ===================================================================== -->
+    <script>
+        // 1. BASE DE DATOS DEL MENÚ REAL DE ORAZIO (Extraído fielmente de las imágenes)
+        const MENU_DATA = [
+            {
+                id: 'entradas',
+                title: 'Entradas',
+                subtitle: 'Para abrir el apetito y compartir al centro',
+                items: [
+                    {
+                        id: 'ent-1',
+                        name: 'Hummus de lentejas',
+                        description: 'Tomate ahumado, albahaca y pan frito.',
+                        tags: ['vegetariano'],
+                        badge: null
+                    },
+                    {
+                        id: 'ent-2',
+                        name: 'Arancini',
+                        description: 'Croquetas de risotto rellenas de mozzarella, con parmesano rallado (3 piezas).',
+                        tags: ['vegetariano', 'favorito'],
+                        badge: '3 piezas'
+                    },
+                    {
+                        id: 'ent-3',
+                        name: 'Betabeles dulces',
+                        description: 'Labneh, piñones tostados y hierbabuena.',
+                        tags: ['vegetariano'],
+                        badge: null
+                    }
+                ]
+            },
+            {
+                id: 'ensaladas',
+                title: 'Ensaladas',
+                subtitle: 'Frescas y balanceadas',
+                items: [
+                    {
+                        id: 'ens-1',
+                        name: 'Pepino y Feta',
+                        description: 'Corazón de lechuga, tahini y vinagreta agridulce.',
+                        tags: ['vegetariano'],
+                        badge: null
+                    },
+                    {
+                        id: 'ens-2',
+                        name: 'César',
+                        description: 'Lechuga italiana, arúgula, grana padano, pecorino y pan crocante.',
+                        tags: ['favorito'],
+                        badge: null
+                    }
+                ]
+            },
+            {
+                id: 'pizzas-ny',
+                title: 'Pizzas Nueva York',
+                subtitle: 'Delgadas, crujientes y de borde aireado',
+                items: [
+                    {
+                        id: 'pny-1',
+                        name: 'Pepperoni',
+                        description: 'Salsa de tomate, mozzarella y pepperoni.',
+                        tags: ['favorito'],
+                        badge: 'Clásica NY'
+                    },
+                    {
+                        id: 'pny-2',
+                        name: 'Queso',
+                        description: 'Salsa de tomate y mozzarella.',
+                        tags: ['vegetariano'],
+                        badge: null
+                    },
+                    {
+                        id: 'pny-3',
+                        name: 'Blanca',
+                        description: 'Mezcla de mozzarella, provolone y cheddar.',
+                        tags: ['vegetariano'],
+                        badge: 'Sin salsa roja'
+                    },
+                    {
+                        id: 'pny-4',
+                        name: 'Tie-dye',
+                        description: 'Salsa de vodka, mozzarella y pesto.',
+                        tags: ['vegetariano', 'favorito'],
+                        badge: 'Signature'
+                    },
+                    {
+                        id: 'pny-5',
+                        name: 'Pizza de la casa',
+                        description: 'Salchicha estilo italiana, mozzarella y chimichurri.',
+                        tags: ['favorito'],
+                        badge: 'Recomendada'
+                    }
+                ]
+            },
+            {
+                id: 'detroit',
+                title: 'Detroit',
+                subtitle: 'Horneadas en molde rectangular con costra de queso caramelizado',
+                items: [
+                    {
+                        id: 'det-1',
+                        name: 'Pepperoni picante',
+                        description: 'Salsa vodka, ricotta y miel picante.',
+                        tags: ['picante', 'favorito'],
+                        badge: 'Hot Honey'
+                    },
+                    {
+                        id: 'det-2',
+                        name: 'Centenario',
+                        description: 'Mezcla de quesos, tocino, cebolla caramelizada y hongos.',
+                        tags: ['favorito'],
+                        badge: 'Especialidad local'
+                    }
+                ]
+            },
+            {
+                id: 'pastas',
+                title: 'Pastas y Clásicos',
+                subtitle: 'Pasta fresca hecha en casa y favoritos italoamericanos',
+                items: [
+                    {
+                        id: 'pas-1',
+                        name: 'Lasaña',
+                        description: 'Ragú de res, salsa marinara y parmesano.',
+                        tags: ['favorito'],
+                        badge: null
+                    },
+                    {
+                        id: 'pas-2',
+                        name: 'Fettuccine vodka',
+                        description: 'Pasta fresca, salsa vodka y parmesano.',
+                        tags: ['vegetariano', 'favorito'],
+                        badge: null
+                    },
+                    {
+                        id: 'pas-3',
+                        name: 'Fettuccine limón',
+                        description: 'Mantequilla de vaca, limón real y pecorino romano.',
+                        tags: ['vegetariano'],
+                        badge: null
+                    },
+                    {
+                        id: 'pas-4',
+                        name: 'Cacio e pepe',
+                        description: 'Pasta fresca, pimienta y queso pecorino.',
+                        tags: ['vegetariano'],
+                        badge: null
+                    },
+                    {
+                        id: 'pas-5',
+                        name: 'Dogo Orazio',
+                        description: 'Salchicha de res cuarto de libra, con pan de masa de pizza.',
+                        tags: ['favorito'],
+                        badge: 'Guiño Hermosillo'
+                    },
+                    {
+                        id: 'pas-6',
+                        name: 'Albóndigas',
+                        description: 'Salsa marinara y parmesano (3 piezas).',
+                        tags: [],
+                        badge: '3 piezas'
+                    }
+                ]
+            },
+            {
+                id: 'postres',
+                title: 'Postres',
+                subtitle: 'El cierre dulce artesanal',
+                items: [
+                    {
+                        id: 'pos-1',
+                        name: 'Helado naranjero',
+                        description: 'Cáscara de naranja confitada.',
+                        tags: ['vegetariano', 'favorito'],
+                        badge: 'Tributo local'
+                    },
+                    {
+                        id: 'pos-2',
+                        name: 'Helado de vainilla y miel de abeja',
+                        description: 'Toffe, cereza y sal.',
+                        tags: ['vegetariano'],
+                        badge: null
+                    }
+                ]
+            }
+        ];
+
+        // Estado de la aplicación
+        let activeCategory = 'all';
+        let activeFilter = 'all';
+        let searchQuery = '';
+        let selectedItems = new Map(); // id -> { item, qty }
+        let lastGeneratedTicket = '';
+
+        // =====================================================================
+        // INICIALIZACIÓN
+        // =====================================================================
+        document.addEventListener('DOMContentLoaded', () => {
+            renderCategoryTabs();
+            renderMenu();
+            setupSearchAndFilters();
+            updateLiveRestaurantStatus();
+            initReservationDefaults();
+        });
+
+        // =====================================================================
+        // ESTADO EN VIVO DEL RESTAURANTE (HORARIOS DE HERMOSILLO)
+        // =====================================================================
+        function updateLiveRestaurantStatus() {
+            const badge = document.getElementById('live-status-badge');
+            const now = new Date();
+            const day = now.getDay(); // 0 = Dom, 1 = Lun, 2 = Mar, 3 = Mie, 4 = Jue, 5 = Vie, 6 = Sab
+            const hour = now.getHours() + now.getMinutes() / 60;
+
+            // Horarios reales de Orazio:
+            // Lun (1) - Mar (2): Cerrado
+            // Mié (3) - Jue (4): 13:00 a 23:00
+            // Vie (5) - Sáb (6): 13:00 a 01:00 (25:00)
+            // Dom (0): 13:00 a 22:00
+            let isOpen = false;
+            let statusText = '';
+
+            // Verificar si sigue abierto de la madrugada anterior (Vie o Sáb después de medianoche)
+            if ((day === 6 || day === 0) && hour < 1) {
+                isOpen = true;
+                statusText = 'Abierto ahora · Cierra 1:00 AM';
+            } else if (day === 1 || day === 2) {
+                isOpen = false;
+                statusText = 'Cerrado hoy · Abrimos Miércoles 1:00 PM';
+            } else if (day === 3 || day === 4) {
+                if (hour >= 13 && hour < 23) {
+                    isOpen = true;
+                    statusText = 'Abierto ahora · Cierra 11:00 PM';
+                } else {
+                    statusText = hour < 13 ? 'Abrimos hoy a la 1:00 PM' : 'Cerrado · Abrimos mañana 1:00 PM';
+                }
+            } else if (day === 5 || day === 6) {
+                if (hour >= 13) {
+                    isOpen = true;
+                    statusText = 'Abierto ahora · Cierra 1:00 AM';
+                } else {
+                    statusText = 'Abrimos hoy a la 1:00 PM';
+                }
+            } else if (day === 0) {
+                if (hour >= 13 && hour < 22) {
+                    isOpen = true;
+                    statusText = 'Abierto ahora · Cierra 10:00 PM';
+                } else {
+                    statusText = hour < 13 ? 'Abrimos hoy a la 1:00 PM' : 'Cerrado · Abrimos Miércoles 1:00 PM';
+                }
+            }
+
+            badge.innerHTML = `
+                <span class="w-2 h-2 rounded-full ${isOpen ? 'bg-emerald-600 animate-pulse' : 'bg-orazio-red'}"></span>
+                <span>${statusText}</span>
+            `;
+        }
+
+        // =====================================================================
+        // RENDERIZADO DE TABS Y MENÚ INTERACTIVO
+        // =====================================================================
+        function renderCategoryTabs() {
+            const container = document.getElementById('category-tabs');
+            const allTab = `<button onclick="selectCategory('all')" data-cat="all" class="cat-tab px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all whitespace-nowrap cursor-pointer bg-orazio-red text-orazio-cream">Todo el menú</button>`;
+            
+            const tabs = MENU_DATA.map(cat => `
+                <button onclick="selectCategory('${cat.id}')" data-cat="${cat.id}" class="cat-tab px-3.5 py-1.5 rounded-full text-xs font-medium transition-all whitespace-nowrap cursor-pointer text-orazio-ink/80 hover:bg-orazio-sand/70">
+                    ${cat.title}
+                </button>
+            `).join('');
+
+            container.innerHTML = allTab + tabs;
+        }
+
+        function selectCategory(catId) {
+            activeCategory = catId;
+            document.querySelectorAll('.cat-tab').forEach(btn => {
+                if (btn.dataset.cat === catId) {
+                    btn.className = 'cat-tab px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all whitespace-nowrap cursor-pointer bg-orazio-red text-orazio-cream';
+                } else {
+                    btn.className = 'cat-tab px-3.5 py-1.5 rounded-full text-xs font-medium transition-all whitespace-nowrap cursor-pointer text-orazio-ink/80 hover:bg-orazio-sand/70';
+                }
+            });
+            renderMenu();
+        }
+
+        function setupSearchAndFilters() {
+            const searchInput = document.getElementById('search-input');
+            searchInput.addEventListener('input', (e) => {
+                searchQuery = e.target.value.toLowerCase().trim();
+                renderMenu();
+            });
+
+            document.querySelectorAll('.filter-chip').forEach(chip => {
+                chip.addEventListener('click', () => {
+                    activeFilter = chip.dataset.filter;
+                    document.querySelectorAll('.filter-chip').forEach(c => {
+                        c.className = 'filter-chip px-3.5 py-2 rounded-xl text-xs font-medium bg-orazio-paper border border-orazio-ink/15 text-orazio-ink hover:border-orazio-ink/40 transition-all whitespace-nowrap cursor-pointer';
+                    });
+                    chip.className = 'filter-chip active px-3.5 py-2 rounded-xl text-xs font-medium bg-orazio-ink text-orazio-cream transition-all whitespace-nowrap cursor-pointer';
+                    renderMenu();
+                });
+            });
+        }
+
+        function resetFilters() {
+            activeCategory = 'all';
+            activeFilter = 'all';
+            searchQuery = '';
+            document.getElementById('search-input').value = '';
+            selectCategory('all');
+            document.querySelectorAll('.filter-chip').forEach(c => {
+                c.className = c.dataset.filter === 'all'
+                    ? 'filter-chip active px-3.5 py-2 rounded-xl text-xs font-medium bg-orazio-ink text-orazio-cream transition-all whitespace-nowrap cursor-pointer'
+                    : 'filter-chip px-3.5 py-2 rounded-xl text-xs font-medium bg-orazio-paper border border-orazio-ink/15 text-orazio-ink hover:border-orazio-ink/40 transition-all whitespace-nowrap cursor-pointer';
+            });
+            renderMenu();
+        }
+
+        function renderMenu() {
+            const container = document.getElementById('menu-container');
+            const emptyState = document.getElementById('empty-state');
+            let html = '';
+            let totalVisibleItems = 0;
+
+            MENU_DATA.forEach(section => {
+                if (activeCategory !== 'all' && section.id !== activeCategory) return;
+
+                const filteredItems = section.items.filter(item => {
+                    const matchesSearch = !searchQuery || 
+                        item.name.toLowerCase().includes(searchQuery) || 
+                        item.description.toLowerCase().includes(searchQuery);
+                    const matchesFilter = activeFilter === 'all' || item.tags.includes(activeFilter);
+                    return matchesSearch && matchesFilter;
+                });
+
+                if (filteredItems.length === 0) return;
+                totalVisibleItems += filteredItems.length;
+
+                const itemsHtml = filteredItems.map(item => {
+                    const selectedEntry = selectedItems.get(item.id);
+                    const qty = selectedEntry ? selectedEntry.qty : 0;
+
+                    return `
+                        <article class="group bg-orazio-paper hover:bg-white border ${qty > 0 ? 'border-orazio-red/50 ring-1 ring-orazio-red/20' : 'border-orazio-ink/10'} rounded-2xl p-4 sm:p-5 transition-all flex items-start justify-between gap-4">
+                            <div class="space-y-1.5 flex-1">
+                                <div class="flex flex-wrap items-center gap-2">
+                                    <h3 class="font-semibold text-base sm:text-lg text-orazio-ink leading-snug">${item.name}</h3>
+                                    ${item.badge ? `<span class="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-md bg-orazio-sand text-orazio-ink/90">${item.badge}</span>` : ''}
+                                    ${item.tags.includes('picante') ? `<span class="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-red-100 text-orazio-red">Picante</span>` : ''}
+                                    ${item.tags.includes('vegetariano') ? `<span class="text-[10px] font-medium px-2 py-0.5 rounded-md bg-emerald-100/80 text-emerald-800">Veg</span>` : ''}
+                                </div>
+                                <p class="text-sm text-orazio-muted leading-relaxed">${item.description}</p>
+                            </div>
+
+                            <!-- Control táctil minimalista para agregar a "Tu selección en mesa" -->
+                            <div class="shrink-0 pt-0.5">
+                                ${qty === 0 ? `
+                                    <button onclick="addItem('${item.id}')" aria-label="Agregar ${item.name} a mi lista" class="w-9 h-9 rounded-full border border-orazio-ink/20 bg-orazio-cream hover:bg-orazio-red hover:border-orazio-red hover:text-orazio-cream text-orazio-ink flex items-center justify-center transition-all active:scale-90 cursor-pointer">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+                                    </button>
+                                ` : `
+                                    <div class="flex items-center gap-1.5 bg-orazio-red text-orazio-cream rounded-full px-1.5 py-1 shadow-xs">
+                                        <button onclick="removeItem('${item.id}')" aria-label="Quitar uno" class="w-6 h-6 rounded-full hover:bg-black/15 flex items-center justify-center text-sm font-bold cursor-pointer">−</button>
+                                        <span class="text-xs font-bold min-w-[14px] text-center">${qty}</span>
+                                        <button onclick="addItem('${item.id}')" aria-label="Agregar otro" class="w-6 h-6 rounded-full hover:bg-black/15 flex items-center justify-center text-sm font-bold cursor-pointer">+</button>
+                                    </div>
+                                `}
+                            </div>
+                        </article>
+                    `;
+                }).join('');
+
+                html += `
+                    <section class="animate-fade-in">
+                        <div class="mb-3.5">
+                            <h2 class="font-serif text-2xl sm:text-3xl text-orazio-ink">${section.title}</h2>
+                            <p class="text-xs text-orazio-muted">${section.subtitle}</p>
+                        </div>
+                        <div class="grid grid-cols-1 gap-3">
+                            ${itemsHtml}
+                        </div>
+                    </section>
+                `;
+            });
+
+            container.innerHTML = html;
+            emptyState.classList.toggle('hidden', totalVisibleItems > 0);
+        }
+
+        // =====================================================================
+        // GESTIÓN DE LISTA DE ANTOJOS / COMANDA EN MESA
+        // =====================================================================
+        function findItemById(id) {
+            for (const cat of MENU_DATA) {
+                const found = cat.items.find(i => i.id === id);
+                if (found) return found;
+            }
+            return null;
+        }
+
+        function addItem(id) {
+            const item = findItemById(id);
+            if (!item) return;
+            const current = selectedItems.get(id);
+            selectedItems.set(id, { item, qty: current ? current.qty + 1 : 1 });
+            renderMenu();
+            updateSelectionBar();
+        }
+
+        function removeItem(id) {
+            const current = selectedItems.get(id);
+            if (!current) return;
+            if (current.qty <= 1) {
+                selectedItems.delete(id);
+            } else {
+                selectedItems.set(id, { item: current.item, qty: current.qty - 1 });
+            }
+            renderMenu();
+            updateSelectionBar();
+            if (!document.getElementById('selection-modal').classList.contains('hidden')) {
+                renderSelectionModalList();
+            }
+        }
+
+        function updateSelectionBar() {
+            const bar = document.getElementById('selection-bar');
+            const countEl = document.getElementById('selection-count');
+            const previewEl = document.getElementById('selection-preview');
+
+            let totalQty = 0;
+            let names = [];
+            selectedItems.forEach(({ item, qty }) => {
+                totalQty += qty;
+                names.push(`${qty}x ${item.name}`);
+            });
+
+            if (totalQty === 0) {
+                bar.classList.add('hidden');
+            } else {
+                bar.classList.remove('hidden');
+                countEl.textContent = totalQty;
+                previewEl.textContent = names.join(', ');
+            }
+        }
+
+        function openSelectionModal() {
+            renderSelectionModalList();
+            const modal = document.getElementById('selection-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeSelectionModal() {
+            const modal = document.getElementById('selection-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function renderSelectionModalList() {
+            const container = document.getElementById('selection-list-container');
+            if (selectedItems.size === 0) {
+                closeSelectionModal();
+                return;
+            }
+
+            let html = '';
+            selectedItems.forEach(({ item, qty }) => {
+                html += `
+                    <div class="flex items-center justify-between gap-3 bg-orazio-cream p-3.5 rounded-2xl border border-orazio-ink/10">
+                        <div>
+                            <p class="font-semibold text-sm text-orazio-ink">${item.name}</p>
+                            <p class="text-xs text-orazio-muted line-clamp-1">${item.description}</p>
+                        </div>
+                        <div class="flex items-center gap-2 bg-orazio-paper border border-orazio-ink/15 rounded-full px-2 py-1">
+                            <button onclick="removeItem('${item.id}')" class="w-6 h-6 rounded-full hover:bg-orazio-sand text-sm font-bold cursor-pointer">−</button>
+                            <span class="text-xs font-bold min-w-[16px] text-center">${qty}</span>
+                            <button onclick="addItem('${item.id}'); renderSelectionModalList();" class="w-6 h-6 rounded-full hover:bg-orazio-sand text-sm font-bold cursor-pointer">+</button>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function clearSelection() {
+            selectedItems.clear();
+            renderMenu();
+            updateSelectionBar();
+            closeSelectionModal();
+        }
+
+        function copySelectionList() {
+            let lines = ['🍕 *Mi selección en Orazio Hermosillo:*'];
+            selectedItems.forEach(({ item, qty }) => {
+                lines.push(`• ${qty}x ${item.name}`);
+            });
+            copyToClipboard(lines.join('\n'), 'Lista copiada para compartir');
+        }
+
+        // =====================================================================
+        // SISTEMA DE RESERVACIONES INTELIGENTE
+        // =====================================================================
+        function initReservationDefaults() {
+            // Configurar selector de personas
+            document.querySelectorAll('.guest-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.getElementById('res-guests').value = btn.dataset.guests;
+                    document.querySelectorAll('.guest-btn').forEach(b => {
+                        b.className = 'guest-btn py-2.5 rounded-xl text-sm font-semibold border border-orazio-ink/15 bg-orazio-cream text-orazio-ink hover:border-orazio-ink/40 transition-all cursor-pointer';
+                    });
+                    btn.className = 'guest-btn py-2.5 rounded-xl text-sm font-semibold border border-orazio-red bg-orazio-red text-orazio-cream transition-all cursor-pointer';
+                });
+            });
+
+            // Establecer fecha por defecto (hoy si está abierto, o próximo miércoles si es lun/mar)
+            const dateInput = document.getElementById('res-date');
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const dd = String(today.getDate()).padStart(2, '0');
+            dateInput.min = `${yyyy}-${mm}-${dd}`;
+
+            // Si hoy es lunes (1) o martes (2), sugerir el miércoles próximo automáticamente
+            const suggested = new Date(today);
+            if (suggested.getDay() === 1) suggested.setDate(suggested.getDate() + 2);
+            if (suggested.getDay() === 2) suggested.setDate(suggested.getDate() + 1);
+            
+            dateInput.value = `${suggested.getFullYear()}-${String(suggested.getMonth() + 1).padStart(2, '0')}-${String(suggested.getDate()).padStart(2, '0')}`;
+            updateAvailableHours();
+        }
+
+        function updateAvailableHours() {
+            const dateVal = document.getElementById('res-date').value;
+            const container = document.getElementById('time-slots-container');
+            const hint = document.getElementById('schedule-hint');
+            const timeInput = document.getElementById('res-time');
+            const submitBtn = document.getElementById('submit-res-btn');
+
+            if (!dateVal) return;
+
+            const [y, m, d] = dateVal.split('-').map(Number);
+            const selectedDate = new Date(y, m - 1, d);
+            const dayOfWeek = selectedDate.getDay(); // 0=Dom, 1=Lun, 2=Mar, 3=Mie, 4=Jue, 5=Vie, 6=Sab
+
+            // Lunes y Martes cerrado
+            if (dayOfWeek === 1 || dayOfWeek === 2) {
+                hint.textContent = 'Cerrado Lunes y Martes';
+                container.innerHTML = `<div class="col-span-4 bg-red-50 border border-orazio-red/20 text-orazio-red text-xs p-3 rounded-xl text-center">Orazio descansa lunes y martes. Selecciona de miércoles a domingo.</div>`;
+                timeInput.value = '';
+                submitBtn.disabled = true;
+                submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                return;
+            }
+
+            submitBtn.disabled = false;
+            submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+
+            // Definir hora de cierre según el día
+            let closeHour = 22; // Mié-Jue última reserva 10:00 PM (cierra 11 PM)
+            if (dayOfWeek === 5 || dayOfWeek === 6) {
+                closeHour = 24; // Vie-Sáb última reserva 12:00 AM (cierra 1 AM)
+                hint.textContent = 'Abierto 1:00 PM – 1:00 AM';
+            } else if (dayOfWeek === 0) {
+                closeHour = 21; // Dom última reserva 9:00 PM (cierra 10 PM)
+                hint.textContent = 'Abierto 1:00 PM – 10:00 PM';
+            } else {
+                hint.textContent = 'Abierto 1:00 PM – 11:00 PM';
+            }
+
+            const slots = [];
+            for (let h = 13; h <= closeHour; h++) {
+                slots.push(formatHour(h, 0));
+                if (h < closeHour) {
+                    slots.push(formatHour(h, 30));
+                }
+            }
+
+            container.innerHTML = slots.map((slot, idx) => `
+                <button type="button" onclick="selectTimeSlot(this, '${slot}')" class="time-slot-btn py-2 px-1 rounded-xl text-xs font-medium border ${idx === 4 ? 'border-orazio-red bg-orazio-red text-orazio-cream' : 'border-orazio-ink/15 bg-orazio-cream text-orazio-ink hover:border-orazio-ink/40'} transition-all cursor-pointer">
+                    ${slot}
+                </button>
+            `).join('');
+
+            // Seleccionar por defecto un horario popular (ej. 3:00 PM o el primero disponible)
+            const defaultSlot = slots[4] || slots[0];
+            timeInput.value = defaultSlot;
+        }
+
+        function formatHour(h24, mins) {
+            const mStr = mins === 0 ? '00' : '30';
+            if (h24 === 24) return `12:${mStr} AM`;
+            const period = h24 >= 12 ? 'PM' : 'AM';
+            const h12 = h24 > 12 ? h24 - 12 : h24;
+            return `${h12}:${mStr} ${period}`;
+        }
+
+        function selectTimeSlot(btn, slot) {
+            document.getElementById('res-time').value = slot;
+            document.querySelectorAll('.time-slot-btn').forEach(b => {
+                b.className = 'time-slot-btn py-2 px-1 rounded-xl text-xs font-medium border border-orazio-ink/15 bg-orazio-cream text-orazio-ink hover:border-orazio-ink/40 transition-all cursor-pointer';
+            });
+            btn.className = 'time-slot-btn py-2 px-1 rounded-xl text-xs font-medium border border-orazio-red bg-orazio-red text-orazio-cream transition-all cursor-pointer';
+        }
+
+        function openReserveModal() {
+            const modal = document.getElementById('reserve-modal');
+            const includeWrapper = document.getElementById('include-selection-wrapper');
+            const modalSelCount = document.getElementById('modal-sel-count');
+
+            let totalQty = 0;
+            selectedItems.forEach(({ qty }) => totalQty += qty);
+
+            if (totalQty > 0) {
+                includeWrapper.classList.remove('hidden');
+                modalSelCount.textContent = totalQty;
+            } else {
+                includeWrapper.classList.add('hidden');
+            }
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeReserveModal() {
+            const modal = document.getElementById('reserve-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function handleReservationSubmit(e) {
+            e.preventDefault();
+            const guests = document.getElementById('res-guests').value;
+            const dateRaw = document.getElementById('res-date').value;
+            const time = document.getElementById('res-time').value;
+            const zone = document.getElementById('res-zone').value;
+            const name = document.getElementById('res-name').value.trim();
+            const phone = document.getElementById('res-phone').value.trim();
+            const notes = document.getElementById('res-notes').value.trim();
+            const includeMenu = document.getElementById('res-include-menu').checked;
+
+            if (!time) return;
+
+            // Formatear fecha legible en español
+            const [y, m, d] = dateRaw.split('-').map(Number);
+            const dateObj = new Date(y, m - 1, d);
+            const formattedDate = dateObj.toLocaleDateString('es-MX', { weekday: 'long', day: 'numeric', month: 'long' });
+
+            // Código de referencia único
+            const folio = 'ORZ-' + Math.floor(1000 + Math.random() * 9000);
+
+            let menuSummaryLines = [];
+            if (includeMenu && selectedItems.size > 0) {
+                selectedItems.forEach(({ item, qty }) => {
+                    menuSummaryLines.push(`${qty}x ${item.name}`);
+                });
+            }
+
+            // Guardar ticket en texto plano para copiar
+            lastGeneratedTicket = [
+                `🍕 RESERVACIÓN ORAZIO HERMOSILLO (${folio})`,
+                `• Titular: ${name}`,
+                `• Personas: ${guests}`,
+                `• Fecha: ${formattedDate}`,
+                `• Hora: ${time}`,
+                `• Área: ${zone}`,
+                `• Teléfono: ${phone}`,
+                notes ? `• Nota: ${notes}` : null,
+                menuSummaryLines.length ? `• Antojos preseleccionados: ${menuSummaryLines.join(', ')}` : null,
+                `📍 Hidalgo 63, Col. Centenario (Hotel Plaza Londres)`
+            ].filter(Boolean).join('\n');
+
+            // Renderizar tarjeta visual de confirmación
+            const summaryHtml = `
+                <div class="flex justify-between items-center pb-2 border-b border-orazio-ink/10">
+                    <span class="text-xs text-orazio-muted">Folio</span>
+                    <span class="font-mono font-bold text-orazio-red">${folio}</span>
+                </div>
+                <div class="flex justify-between"><span class="text-orazio-muted">A nombre de</span><span class="font-semibold text-orazio-ink">${name}</span></div>
+                <div class="flex justify-between"><span class="text-orazio-muted">Mesa para</span><span class="font-semibold text-orazio-ink">${guests} personas (${zone})</span></div>
+                <div class="flex justify-between"><span class="text-orazio-muted">Fecha y hora</span><span class="font-semibold text-orazio-ink capitalize">${formattedDate} · ${time}</span></div>
+                ${notes ? `<div class="flex justify-between"><span class="text-orazio-muted">Notas</span><span class="text-orazio-ink">${notes}</span></div>` : ''}
+                ${menuSummaryLines.length ? `
+                    <div class="pt-2 border-t border-orazio-ink/10">
+                        <span class="text-xs text-orazio-muted block mb-1">Preselección de menú:</span>
+                        <p class="text-xs font-medium text-orazio-ink">${menuSummaryLines.join(' · ')}</p>
+                    </div>
+                ` : ''}
+            `;
+
+            document.getElementById('ticket-summary').innerHTML = summaryHtml;
+            document.getElementById('reservation-form').classList.add('hidden');
+            document.getElementById('reservation-confirmation').classList.remove('hidden');
+        }
+
+        function copyReservationTicket() {
+            copyToClipboard(lastGeneratedTicket, 'Pase de reservación copiado');
+        }
+
+        function resetReservationForm() {
+            document.getElementById('reservation-confirmation').classList.add('hidden');
+            document.getElementById('reservation-form').classList.remove('hidden');
+        }
+
+        // =====================================================================
+        // MODAL DE INFORMACIÓN Y UTILIDADES
+        // =====================================================================
+        function openInfoModal() {
+            const modal = document.getElementById('info-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeInfoModal() {
+            const modal = document.getElementById('info-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        // Cerrar modales al tocar el fondo oscuro
+        ['reserve-modal', 'selection-modal', 'info-modal'].forEach(id => {
+            document.getElementById(id).addEventListener('click', (e) => {
+                if (e.target.id === id) {
+                    e.target.classList.add('hidden');
+                    e.target.classList.remove('flex');
+                }
+            });
+        });
+
+        // Copiar al portapapeles compatible con iframes y móviles
+        function copyToClipboard(text, message) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                document.execCommand('copy');
+                showToast(message);
+            } catch (err) {
+                showToast('No se pudo copiar automáticamente');
+            }
+            document.body.removeChild(textarea);
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.remove('opacity-0');
+            setTimeout(() => {
+                toast.classList.add('opacity-0');
+            }, 2400);
+        }
+    </script>
+</body>
+</html>
